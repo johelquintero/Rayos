@@ -1,4 +1,4 @@
-# Mapa de Rayos en Tiempo Real - Venezuela
+# Mapa de Rayos en Tiempo Real - Venezuela (v2)
 
 Este proyecto muestra un mapa de Venezuela con la ubicación de los rayos en tiempo real, actualizándose automáticamente cada 5 minutos. Los datos son obtenidos del sitio web Meteologix.
 
