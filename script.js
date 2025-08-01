@@ -44,7 +44,7 @@ function updateStatus(message) {
 function fetchData() {
     // URL de la API generada por GitHub Actions
     // Asegúrate de que el nombre de usuario y repositorio sean correctos
-    const apiUrl = 'https://joel-qr.github.io/mapa-de-rayos/api/datos_rayos.json';
+    const apiUrl = 'https://johelquintero.github.io/Rayos/api/datos_rayos.json';
     
     updateStatus('Buscando datos desde la API...');
     console.log(`Solicitando datos desde: ${apiUrl}`);
