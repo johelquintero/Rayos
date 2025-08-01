@@ -40,7 +40,11 @@ async function generarDatosDeRayos() {
         const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(meteologixUrl)}`;
         
         console.log(`Descargando datos a través del proxy: ${proxyUrl}`);
-        const response = await axios.get(proxyUrl);
+        const response = await axios.get(proxyUrl, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
+            }
+        });
         const html = response.data.contents; // El contenido real está dentro de 'contents'
 
         // 3. Procesar el HTML para extraer los datos de los rayos
