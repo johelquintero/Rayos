@@ -1,0 +1,21 @@
+{
+  "name": "mapa-de-rayos-api",
+  "version": "1.0.0",
+  "description": "Un script para generar una API de datos de rayos para Venezuela.",
+  "main": "generar_api.js",
+  "scripts": {
+    "start": "node generar_api.js"
+  },
+  "keywords": [
+    "rayos",
+    "api",
+    "venezuela",
+    "mapa"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "jsdom": "^24.1.0"
+  }
+}
