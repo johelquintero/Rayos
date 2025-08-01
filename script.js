@@ -28,6 +28,7 @@ const imageConfig = {
 };
 
 let lightningLayer = L.layerGroup().addTo(map);
+let datosParaAPI = []; // Variable global para guardar los datos de los rayos
 
 function getColor(age) {
     // Ajustar colores según la documentación de Meteologix
@@ -86,6 +87,7 @@ function fetchData() {
         })
         .then(data => {
             lightningLayer.clearLayers();
+            datosParaAPI = []; // Limpiar los datos anteriores
             const parser = new DOMParser();
             const doc = parser.parseFromString(data.contents, 'text/html');
             const lightningSpans = doc.querySelectorAll('.ap.lgt');
@@ -110,6 +112,13 @@ function fetchData() {
                             iconAnchor: [12, 12]
                         });
 
+                        // Guardar los datos del rayo en nuestra variable global
+                        datosParaAPI.push({
+                            lat: parseFloat(lat.toFixed(4)),
+                            lng: parseFloat(lng.toFixed(4)),
+                            age: age * 5
+                        });
+
                         L.marker([lat, lng], { icon: customIcon })
                             .bindPopup(`<strong>⚡ Rayo detectado</strong><br><strong>Edad:</strong> ${age * 5} minutos<br><strong>Coordenadas:</strong> ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
                             .addTo(lightningLayer);
@@ -124,6 +133,12 @@ function fetchData() {
                 <strong>Rayos válidos:</strong> ${rayosValidos}
             `;
             updateStatus(statusMessage);
+
+            // Mostrar el botón de generar API si hay datos
+            const generarApiButton = document.getElementById('generar-api');
+            if (datosParaAPI.length > 0) {
+                generarApiButton.style.display = 'block';
+            }
         })
         .catch(error => {
             console.error('Error al obtener los datos:', error);
@@ -153,6 +168,27 @@ function init() {
         return div;
     };
     updateButton.addTo(map);
+
+    // Lógica para el botón de generar API
+    const generarApiButton = document.getElementById('generar-api');
+    generarApiButton.addEventListener('click', () => {
+        if (datosParaAPI.length === 0) {
+            alert('No hay datos de rayos para generar la API. Por favor, espera a que se carguen los datos.');
+            return;
+        }
+
+        const jsonString = JSON.stringify(datosParaAPI, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'datos_rayos.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', init);
