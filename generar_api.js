@@ -36,14 +36,12 @@ async function generarDatosDeRayos() {
         const timestamp = `${year}${month}${day}-${hours}${roundedMinutes}z`;
 
         // 2. Descargar el HTML de Meteologix
-        const apiUrl = `https://meteologix.com/ve/lightning/venezuela/${timestamp}.html`;
-        console.log(`Descargando datos desde: ${apiUrl}`);
-        const response = await axios.get(apiUrl, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
-        });
-        const html = response.data;
+        const meteologixUrl = `https://meteologix.com/ve/lightning/venezuela/${timestamp}.html`;
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(meteologixUrl)}`;
+        
+        console.log(`Descargando datos a través del proxy: ${proxyUrl}`);
+        const response = await axios.get(proxyUrl);
+        const html = response.data.contents; // El contenido real está dentro de 'contents'
 
         // 3. Procesar el HTML para extraer los datos de los rayos
         const dom = new JSDOM(html);
