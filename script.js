@@ -174,10 +174,10 @@ function init() {
             .then(res => res.json())
             .then(apiData => {
                 apiData.radar.nowcast.forEach(frame => {
-                    const radarLayer = L.tileLayer(apiData.host + frame.path + '/512/{z}/{x}/{y}/2/1_1.png', {
+                    const radarLayer = L.tileLayer(apiData.host + frame.path + `/512/{z}/{x}/{y}/${apiData.radar.colorScheme}/${apiData.radar.smooth}.png`, {
                         tileSize: 512,
                         opacity: 0.7,
-                        zIndex: frame.time
+                        zIndex: 9999 // Aumentar zIndex para asegurar visibilidad
                     });
                     radarLayers.push(radarLayer);
                 });
@@ -185,11 +185,12 @@ function init() {
                 // Iniciar animación
                 function showRadarFrame(frameIndex) {
                     // Ocultar todas las capas
-                    radarLayers.forEach(layer => map.removeLayer(layer));
-                    // Mostrar la capa del frame actual
-                    if (radarLayers[frameIndex]) {
-                        radarLayers[frameIndex].addTo(map);
-                    }
+                    // Ocultar la capa anterior
+                    var previousFrameIndex = (frameIndex + radarLayers.length - 1) % radarLayers.length;
+                    map.removeLayer(radarLayers[previousFrameIndex]);
+                    
+                    // Mostrar la capa actual
+                    radarLayers[frameIndex].addTo(map);
                 }
 
                 var currentFrame = 0;
