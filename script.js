@@ -102,13 +102,23 @@ function fetchData() {
                         rayosValidos++;
                         const ageClass = Array.from(span.classList).find(c => c.startsWith('lgt-'));
                         const age = ageClass ? parseInt(ageClass.split('-')[1]) : 0;
-                        const color = getColor(age);
-                        const customIcon = L.divIcon({
-                            className: 'lightning-icon',
-                            html: `<span style="color: ${color}; font-size: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">⚡️</span>`,
-                            iconSize: [25, 25],
-                            iconAnchor: [12, 12]
-                        });
+                        let customIcon;
+
+                        if (age <= 1) { // 0-5 minutos
+                            customIcon = L.icon({
+                                iconUrl: 'icons/lightning-5-minutos.svg',
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 12]
+                            });
+                        } else {
+                            const color = getColor(age);
+                            customIcon = L.divIcon({
+                                className: 'lightning-icon',
+                                html: `<span style="color: ${color}; font-size: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">⚡️</span>`,
+                                iconSize: [25, 25],
+                                iconAnchor: [12, 12]
+                            });
+                        }
 
                         L.marker([lat, lng], { icon: customIcon })
                             .bindPopup(`<strong>⚡ Rayo detectado</strong><br><strong>Edad:</strong> ${age * 5} minutos<br><strong>Coordenadas:</strong> ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
