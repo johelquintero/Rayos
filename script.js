@@ -163,6 +163,70 @@ function init() {
         return div;
     };
     updateButton.addTo(map);
+
+    // --- LÓGICA DEL RADAR ANIMADO ---
+    var radarLayers = [];
+    var radarAnimation;
+    var currentRadarLayer = 0;
+
+    function addRadarLayer() {
+        fetch('https://api.rainviewer.com/public/weather-maps.json')
+            .then(res => res.json())
+            .then(apiData => {
+                apiData.radar.nowcast.forEach(frame => {
+                    const radarLayer = L.tileLayer(apiData.host + frame.path + '/512/{z}/{x}/{y}/2/1_1.png', {
+                        tileSize: 512,
+                        opacity: 0.7,
+                        zIndex: frame.time
+                    });
+                    radarLayers.push(radarLayer);
+                });
+
+                // Iniciar animación
+                function showRadarFrame(frameIndex) {
+                    // Ocultar todas las capas
+                    radarLayers.forEach(layer => map.removeLayer(layer));
+                    // Mostrar la capa del frame actual
+                    if (radarLayers[frameIndex]) {
+                        radarLayers[frameIndex].addTo(map);
+                    }
+                }
+
+                var currentFrame = 0;
+                radarAnimation = setInterval(() => {
+                    if (currentFrame >= radarLayers.length) {
+                        currentFrame = 0;
+                    }
+                    showRadarFrame(currentFrame);
+                    currentFrame++;
+                }, 500);
+            })
+            .catch(console.error);
+    }
+
+    function removeRadarLayer() {
+        clearInterval(radarAnimation);
+        radarLayers.forEach(layer => map.removeLayer(layer));
+        radarLayers = [];
+        currentRadarLayer = 0;
+    }
+
+    var radarControl = L.control.layers(null, {
+        'Radar Animado': L.layerGroup() // Capa ficticia para el control
+    }, { collapsed: false });
+    radarControl.addTo(map);
+
+    map.on('overlayadd', function(e) {
+        if (e.name === 'Radar Animado') {
+            addRadarLayer();
+        }
+    });
+
+    map.on('overlayremove', function(e) {
+        if (e.name === 'Radar Animado') {
+            removeRadarLayer();
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', init);
